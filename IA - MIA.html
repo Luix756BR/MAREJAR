@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <title>MIA IA - Consultoria & Roteiros</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Inteligência Artificial para personalização de roteiros turísticos em Pernambuco" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <style>
+        /* Ajustes globais */
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Jost', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .navbar-custom .navbar-brand .brand-nav-logo {
+            filter: none !important;
+        }
+
+        .navbar-custom {
+            background-color: #ffffff !important;
+            position: fixed !important;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
+            transition: all 0.3s ease-in-out;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .navbar-custom .navbar-brand h1 {
+            color: #13357B !important;
+        }
+
+        .navbar-custom .navbar-nav .nav-link {
+            color: #13357B !important;
+            font-weight: 500;
+        }
+
+        .navbar-custom .navbar-nav .nav-link:hover,
+        .navbar-custom .navbar-nav .nav-link.active {
+            color: #2563eb !important;
+        }
+
+        .ai-main-container {
+            min-height: 100vh;
+            background: #f8fafc;
+            padding-top: 130px;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .welcome-box {
+            max-width: 750px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .ai-logo-container {
+            width: 90px;
+            height: 90px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 15px rgba(19, 53, 123, 0.15);
+            border: 2px solid #e2e8f0;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .ai-logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .chat-container {
+            max-width: 850px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .chip-btn {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+        }
+
+        .chip-btn:hover {
+            background-color: #13357B;
+            color: #ffffff;
+            border-color: #13357B;
+        }
+
+        .chat-input-wrapper {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 6px 12px 6px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input-wrapper input {
+            border: none;
+            outline: none;
+            box-shadow: none;
+            background: transparent;
+            width: 100%;
+        }
+
+        .btn-send, .btn-pause {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-send {
+            background-color: #13357B;
+        }
+
+        .btn-send:hover {
+            background-color: #0b2253;
+        }
+
+        .btn-pause {
+            background-color: #dc3545;
+            display: none; /* Escondido por padrão */
+        }
+
+        .btn-pause:hover {
+            background-color: #b02a37;
+        }
+
+        .ai-response-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border-left: 5px solid #13357B;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Carregando...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Header & Navbar Start -->
+    <header>
+        <div class="container-fluid position-relative p-0">
+            <nav id="navbar" class="navbar navbar-expand-lg navbar-light navbar-custom px-4 px-lg-5 py-3 py-lg-2">
+                <a href="index.html" class="navbar-brand p-0 d-flex align-items-center">
+                    <img src="img/Logo.png" alt="Logo Marejar" style="width: 60px; height: 70px; object-fit: contain;" class="brand-nav-logo me-2">
+                    <h1 class="m-0 fs-3">Marejar</h1>
+                </a>
+
+                <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <a href="index.html" class="nav-item nav-link">Início</a>
+                        <a href="index.html#sobre" class="nav-item nav-link">Sobre</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Serviços</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="IA - MIA.html" class="dropdown-item active">Assistente de IA</a>
+                                <a href="pacotes.html" class="dropdown-item">Pacotes</a>
+                            </div>
+                        </div>
+                        
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Regiões</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="Goiana-regioes.html" class="dropdown-item">Goiana</a>
+                                <a href="Igarassu-regioes.html" class="dropdown-item">Igarassu</a>
+                                <a href="Itamaraca-regioes.html" class="dropdown-item">Itamaracá</a>
+                                <a href="Itapissuma-regioes.html" class="dropdown-item">Itapissuma</a>
+                                <a href="Olinda-regioes.html" class="dropdown-item">Olinda</a>
+                                <a href="Paulista-regioes.html" class="dropdown-item">Paulista</a>
+                            </div>
+                        </div>
+
+                        <a href="contato.html" class="nav-item nav-link">Contato</a>
+                    </div>
+
+                    <div id="user-nav-area" class="ms-lg-4 d-flex align-items-center">
+                        <a href="painel_acesso.html" class="btn btn-outline-primary rounded px-4 py-2 text-white border-white bg-primary bg-opacity-20">Entrar</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!-- Header & Navbar End -->
+
+    <!-- Main AI Interface Start -->
+    <main class="ai-main-container">
+        
+        <!-- Conteúdo Centralizado (Boas-Vindas) com Logo -->
+        <div class="container my-auto" id="mainContentArea">
+            <div class="welcome-box" id="welcomeBox">
+                <div class="ai-logo-container">
+                    <img src="img/Logo.png" alt="Logo Marejar IA">
+                </div>
+                <h2 class="fw-bold text-dark mb-3">Olá! Como posso ajudar no seu roteiro?</h2>
+                <p class="fs-5 mb-4" style="color: #13357B;">
+                    Digite seu destino, orçamento ou preferências para gerarmos uma programação exclusiva no litoral pernambucano.
+                </p>
+            </div>
+
+            <!-- Área onde os cards de resposta serão inseridos dinamicamente pela IA -->
+            <div id="chatHistory" class="chat-container my-4"></div>
+        </div>
+
+        <!-- Área Inferior: Sugestões e Input do Usuário -->
+        <div class="container chat-container mt-auto">
+            
+            <div class="suggestion-chips">
+                <button type="button" class="chip-btn" onclick="fillPrompt('Monte um roteiro de 2 dias em Paulista e Olinda econômico.')">
+                    <i class="fas fa-umbrella-beach me-1 text-primary"></i> 2 dias em Paulista/Olinda
+                </button>
+                <button type="button" class="chip-btn" onclick="fillPrompt('Quais os melhores pontos históricos de Igarassu e Goiana?')">
+                    <i class="fas fa-landmark me-1 text-primary"></i> Rota Histórica (Igarassu/Goiana)
+                </button>
+                <button type="button" class="chip-btn" onclick="fillPrompt('Sugira um passeio em família na Ilha de Itamaracá.')">
+                    <i class="fas fa-ship me-1 text-primary"></i> Passeio em Itamaracá
+                </button>
+            </div>
+
+            <form id="aiChatForm" onsubmit="handleChatSubmit(event)">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="userInput" class="form-control" placeholder="Pergunte ou peça um roteiro personalizado..." autocomplete="off" required>
+                    
+                    <!-- Botão de Enviar -->
+                    <button type="submit" class="btn-send ms-2" id="sendBtn" title="Enviar Mensagem">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+
+                    <!-- Botão de Pausar Resposta -->
+                    <button type="button" class="btn-pause ms-2" id="pauseBtn" onclick="pausarGeracao()" title="Pausar Resposta">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <p class="text-center text-muted small mt-2 mb-0">
+                O Marejar IA processa informações sobre praias, hospedagens e guias em Pernambuco.
+            </p>
+        </div>
+
+    </main>
+    
+    <!-- Footer Start -->
+    <footer class="container-fluid footer py-5 bg-dark text-white border-top border-secondary">
+        <div class="container py-4">
+            <div class="row g-5 justify-content-between">
+                <div class="col-md-6 col-lg-4">
+                    <div class="footer-item d-flex flex-column">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="img/Logo-branca.png" alt="Logo Marejar" style="width: 50px; height: 60px; object-fit: contain;" class="me-2">
+                            <h3 class="text-white m-0">Marejar</h3>
+                        </div>
+                        <p class="text-white-50 mb-4">Descubra. Explore. Viva o melhor do litoral norte de Pernambuco.</p>
+                        <p class="text-white-50 mb-2"><i class="fas fa-graduation-cap me-2 text-primary"></i> TCC - Desenvolvimento de Sistemas</p>
+                        <p class="text-white-50 mb-4"><i class="fas fa-school me-2 text-primary"></i> ETE Jurandir Bezerra Lins</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="mb-4 text-white">Navegação</h4>
+                        <a href="index.html" class="text-white-50 mb-2 text-decoration-none"><i class="fas fa-angle-right me-2 text-primary"></i> Início</a>
+                        <a href="pacotes.html" class="text-white-50 mb-2 text-decoration-none"><i class="fas fa-angle-right me-2 text-primary"></i> Pacotes Turísticos</a>
+                        <a href="contato.html" class="text-white-50 mb-2 text-decoration-none"><i class="fas fa-angle-right me-2 text-primary"></i> Contato</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="mb-4 text-white">Regiões Atendidas</h4>
+                        <p class="text-white-50 mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> Olinda, Paulista, Igarassu, Itapissuma, Itamaracá, Goiana</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer End -->
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Script de Controle da IA e Efeito de Digitação com Pausa -->
+   <!-- Script de Controle da IA e Efeito de Digitação com Pausa -->
+    <script>
+        let isGenerating = false;
+        let typewriterTimeout = null;
+
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        function fillPrompt(text) {
+            document.getElementById('userInput').value = text;
+            document.getElementById('userInput').focus();
+        }
+
+        function pausarGeracao() {
+            if (typewriterTimeout) {
+                clearTimeout(typewriterTimeout);
+                typewriterTimeout = null;
+            }
+            isGenerating = false;
+            document.getElementById('sendBtn').style.display = 'flex';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        async function handleChatSubmit(event) {
+            event.preventDefault();
+            
+            const inputField = document.getElementById('userInput');
+            const chatHistory = document.getElementById('chatHistory');
+            const welcomeBox = document.getElementById('welcomeBox');
+            const promptText = inputField.value.trim();
+
+            if (!promptText || isGenerating) return;
+
+            if (welcomeBox) {
+                welcomeBox.style.display = 'none';
+            }
+
+            inputField.value = '';
+
+            // 1. Adicionar mensagem do usuário
+            const userMsgHTML = `
+                <div class="d-flex justify-content-end mb-3">
+                    <div class="bg-primary text-white p-3 rounded-3 shadow-sm" style="max-width: 80%;">
+                        ${promptText}
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', userMsgHTML);
+
+            // 2. Adicionar indicador de carregamento
+            const loadingId = 'loading-' + Date.now();
+            const loadingHTML = `
+                <div id="${loadingId}" class="ai-response-card p-4 mb-4">
+                    <div class="d-flex align-items-center text-muted">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                        <span>MIA IA está consultando o litoral norte...</span>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', loadingHTML);
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+            isGenerating = true;
+            document.getElementById('sendBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'flex';
+
+            try {
+                const response = await fetch('http://localhost:3001/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: promptText })
+                });
+
+                const data = await response.json();
+                
+                // Remove o loading com segurança se ele existir
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Erro ao conectar com o servidor.');
+                }
+
+                const responseId = 'ai-res-' + Date.now();
+                const responseHTML = `
+                    <div class="ai-response-card p-4 mb-4">
+                        <h5 class="text-primary fw-bold mb-3"><i class="fas fa-compass me-2"></i> MIA IA - Roteiro Marejar</h5>
+                        <div id="${responseId}" class="text-dark"></div>
+                    </div>
+                `;
+                chatHistory.insertAdjacentHTML('beforeend', responseHTML);
+
+                const textContainer = document.getElementById(responseId);
+                const fullText = data.response;
+                let charIndex = 0;
+
+                function typeWriter() {
+                    if (!isGenerating) return;
+
+                    if (charIndex < fullText.length) {
+                        textContainer.innerHTML += fullText.charAt(charIndex);
+                        charIndex++;
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                        typewriterTimeout = setTimeout(typeWriter, 12);
+                    } else {
+                        pausarGeracao();
+                    }
+                }
+
+                typeWriter();
+
+            } catch (error) {
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+                
+                alert('Erro: ' + error.message);
+                pausarGeracao();
+            }
+        }
+    </script>
+</body>
+
+</html>
