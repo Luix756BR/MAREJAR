@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="img/Logo.png" alt="Logo MAREJAR" width="220" />
+  <img src="img/Logo-branca.png" alt="Logo MAREJAR" width="220" />
 </p>
 
 # MAREJAR — Desenvolvimento de um Sistema Web para Planejamento Turístico e Valorização de Experiências Locais
