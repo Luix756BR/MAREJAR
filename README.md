@@ -21,11 +21,11 @@ O **MAREJAR** é uma plataforma digital voltada ao planejamento turístico no **
 - **Banco de dados / Persistência:** arquivo JSON estruturado em `backend/data/db.json` (com coleção `users` e campos específicos como `registration` e `attributes` quando aplicável)[cite: 1].
 
 ## Integrantes do Projeto
-- Dante Vinícius Ferreira Lopes[cite: 1]
-- Gabrielly Chateaubriand Rosa[cite: 1]
-- João Enrick Silva Ferreira[cite: 1]
-- Juana Gabriela Gomes dos Santos[cite: 1]
-- Lázaro Filipe da Silva Borges[cite: 1]
-- Lívia Regina de Oliveira Pereira[cite: 1]
-- Luiz Guilherme da Silva Pereira[cite: 1]
-- Miguel Alves Dias de Moura[cite: 1]
+- Dante Vinícius Ferreira Lopes
+- Gabrielly Chateaubriand Rosa
+- João Enrick Silva Ferreira
+- Juana Gabriela Gomes dos Santos
+- Lázaro Filipe da Silva Borges
+- Lívia Regina de Oliveira Pereira
+- Luiz Guilherme da Silva Pereira
+- Miguel Alves Dias de Moura
