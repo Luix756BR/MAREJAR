@@ -29,10 +29,11 @@
     <style>
         /* Ajustes globais */
         body, html {
-            height: 100%;
+            min-height: 100%;
             margin: 0;
             font-family: 'Jost', sans-serif;
             background-color: #f8fafc;
+            scroll-behavior: auto !important;
         }
 
         .navbar-custom .navbar-brand .brand-nav-logo {
@@ -173,7 +174,7 @@
 
         .btn-pause {
             background-color: #dc3545;
-            display: none; /* Escondido por padrão */
+            display: none;
         }
 
         .btn-pause:hover {
@@ -224,7 +225,7 @@
                                 <a href="pacotes.html" class="dropdown-item">Pacotes</a>
                             </div>
                         </div>
-                        
+
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Regiões</a>
                             <div class="dropdown-menu m-0">
@@ -251,7 +252,7 @@
 
     <!-- Main AI Interface Start -->
     <main class="ai-main-container">
-        
+
         <!-- Conteúdo Centralizado (Boas-Vindas) com Logo -->
         <div class="container my-auto" id="mainContentArea">
             <div class="welcome-box" id="welcomeBox">
@@ -270,7 +271,7 @@
 
         <!-- Área Inferior: Sugestões e Input do Usuário -->
         <div class="container chat-container mt-auto">
-            
+
             <div class="suggestion-chips">
                 <button type="button" class="chip-btn" onclick="fillPrompt('Monte um roteiro de 2 dias em Paulista e Olinda econômico.')">
                     <i class="fas fa-umbrella-beach me-1 text-primary"></i> 2 dias em Paulista/Olinda
@@ -286,7 +287,7 @@
             <form id="aiChatForm" onsubmit="handleChatSubmit(event)">
                 <div class="chat-input-wrapper">
                     <input type="text" id="userInput" class="form-control" placeholder="Pergunte ou peça um roteiro personalizado..." autocomplete="off" required>
-                    
+
                     <!-- Botão de Enviar -->
                     <button type="submit" class="btn-send ms-2" id="sendBtn" title="Enviar Mensagem">
                         <i class="fas fa-paper-plane"></i>
@@ -298,14 +299,14 @@
                     </button>
                 </div>
             </form>
-            
+
             <p class="text-center text-muted small mt-2 mb-0">
                 O Marejar IA processa informações sobre praias, hospedagens e guias em Pernambuco.
             </p>
         </div>
 
     </main>
-    
+
     <!-- Footer Start -->
     <footer class="container-fluid footer py-5 bg-dark text-white border-top border-secondary">
         <div class="container py-4">
@@ -350,19 +351,50 @@
     <script src="js/main.js"></script>
 
     <!-- Script de Controle da IA e Efeito de Digitação com Pausa -->
-   <!-- Script de Controle da IA e Efeito de Digitação com Pausa -->
     <script>
         let isGenerating = false;
         let typewriterTimeout = null;
+        let userLockedScroll = false;
 
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
-        });
+
+            if (isGenerating) {
+                const distanceFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+                // Se o usuário subiu mais de 140px do fundo, não puxa a tela de volta
+                if (distanceFromBottom > 140) {
+                    userLockedScroll = true;
+                } else if (distanceFromBottom <= 40) {
+                    userLockedScroll = false;
+                }
+            }
+        }, { passive: true });
+
+        // Se o usuário mexer na roda do mouse ou arrastar na tela durante a digitação, libera o controle total para ele
+        window.addEventListener('wheel', function () {
+            if (isGenerating) {
+                userLockedScroll = true;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', function () {
+            if (isGenerating) {
+                userLockedScroll = true;
+            }
+        }, { passive: true });
+
+        function followBottomIfAllowed() {
+            if (!isGenerating || userLockedScroll) return;
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: 'auto'
+            });
+        }
 
         function fillPrompt(text) {
             document.getElementById('userInput').value = text;
@@ -375,13 +407,14 @@
                 typewriterTimeout = null;
             }
             isGenerating = false;
+            userLockedScroll = false;
             document.getElementById('sendBtn').style.display = 'flex';
             document.getElementById('pauseBtn').style.display = 'none';
         }
 
         async function handleChatSubmit(event) {
             event.preventDefault();
-            
+
             const inputField = document.getElementById('userInput');
             const chatHistory = document.getElementById('chatHistory');
             const welcomeBox = document.getElementById('welcomeBox');
@@ -394,8 +427,8 @@
             }
 
             inputField.value = '';
+            userLockedScroll = false;
 
-            // 1. Adicionar mensagem do usuário
             const userMsgHTML = `
                 <div class="d-flex justify-content-end mb-3">
                     <div class="bg-primary text-white p-3 rounded-3 shadow-sm" style="max-width: 80%;">
@@ -405,7 +438,6 @@
             `;
             chatHistory.insertAdjacentHTML('beforeend', userMsgHTML);
 
-            // 2. Adicionar indicador de carregamento
             const loadingId = 'loading-' + Date.now();
             const loadingHTML = `
                 <div id="${loadingId}" class="ai-response-card p-4 mb-4">
@@ -416,11 +448,11 @@
                 </div>
             `;
             chatHistory.insertAdjacentHTML('beforeend', loadingHTML);
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
             isGenerating = true;
             document.getElementById('sendBtn').style.display = 'none';
             document.getElementById('pauseBtn').style.display = 'flex';
+            followBottomIfAllowed();
 
             try {
                 const response = await fetch('http://localhost:3001/api/chat', {
@@ -430,8 +462,7 @@
                 });
 
                 const data = await response.json();
-                
-                // Remove o loading com segurança se ele existir
+
                 const loadingEl = document.getElementById(loadingId);
                 if (loadingEl) loadingEl.remove();
 
@@ -449,16 +480,16 @@
                 chatHistory.insertAdjacentHTML('beforeend', responseHTML);
 
                 const textContainer = document.getElementById(responseId);
-                const fullText = data.response;
+                const fullText = data.response || '';
                 let charIndex = 0;
 
                 function typeWriter() {
                     if (!isGenerating) return;
 
                     if (charIndex < fullText.length) {
-                        textContainer.innerHTML += fullText.charAt(charIndex);
+                        textContainer.textContent += fullText.charAt(charIndex);
                         charIndex++;
-                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                        followBottomIfAllowed();
                         typewriterTimeout = setTimeout(typeWriter, 12);
                     } else {
                         pausarGeracao();
@@ -470,7 +501,7 @@
             } catch (error) {
                 const loadingEl = document.getElementById(loadingId);
                 if (loadingEl) loadingEl.remove();
-                
+
                 alert('Erro: ' + error.message);
                 pausarGeracao();
             }
