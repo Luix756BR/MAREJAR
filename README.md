@@ -11,14 +11,14 @@ O **MAREJAR** é uma plataforma digital voltada ao planejamento turístico no **
 ## Funcionalidades Principais
 - **Criação personalizada de roteiros:** sugestões organizadas por destino (município ou praia), duração da viagem, orçamento (econômico, moderado ou alto padrão) e interesses (praias, ecoturismo, história, gastronomia e lazer).
 - **Consultoria dinâmica por IA (Marejar IA):** assistente em formato de chat para tirar dúvidas e receber recomendações sobre o turismo pernambucano.
-- **Catálogo do litoral e serviços locais:** exploração por categorias (como Litoral Norte, Litoral Sul, hospedagens, restaurantes e guias turísticos) com foco em profissionais credenciados no Cadastur[cite: 1].
-- **Cadastro, autenticação e perfil:** gerenciamento de usuários com hash de senhas via `bcrypt`, autenticação via `JWT` e persistência em `backend/data/db.json`[cite: 1].
-- **Localização e acessibilidade:** integração com mapas/links de localização e recursos voltados à responsividade e acessibilidade[cite: 1].
+- **Catálogo do litoral e serviços locais:** exploração por categorias (como Litoral Norte, Litoral Sul, hospedagens, restaurantes e guias turísticos) com foco em profissionais credenciados no Cadastur.
+- **Cadastro, autenticação e perfil:** gerenciamento de usuários com hash de senhas via `bcrypt`, autenticação via `JWT` e persistência em `backend/data/db.json`.
+- **Localização e acessibilidade:** integração com mapas/links de localização e recursos voltados à responsividade e acessibilidade.
 
 ## Tecnologias e Arquitetura
-- **Front-end:** HTML5, CSS3 e JavaScript (Vanilla JS), realizando requisições HTTP assíncronas (`fetch`) para a API[cite: 1].
-- **Back-end:** Node.js com Express (executando na porta `3001`), `JWT` (`jsonwebtoken`), `bcrypt`, `dotenv`, `CORS` e `nodemon`[cite: 1].
-- **Banco de dados / Persistência:** arquivo JSON estruturado em `backend/data/db.json` (com coleção `users` e campos específicos como `registration` e `attributes` quando aplicável)[cite: 1].
+- **Front-end:** HTML5, CSS3 e JavaScript (Vanilla JS), realizando requisições HTTP assíncronas (`fetch`) para a API.
+- **Back-end:** Node.js com Express (executando na porta `3001`), `JWT` (`jsonwebtoken`), `bcrypt`, `dotenv`, `CORS` e `nodemon`.
+- **Banco de dados / Persistência:** arquivo JSON estruturado em `backend/data/db.json` (com coleção `users` e campos específicos como `registration` e `attributes` quando aplicável).
 
 ## Integrantes do Projeto
 - Dante Vinícius Ferreira Lopes
